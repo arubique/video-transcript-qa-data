@@ -1,1 +1,28 @@
-# conda create --prefix ./envs/trqa python=3.10.0 --no-deps --channel conda-forge --channel defaults --override-channels
+# Core dependencies
+openai>=1.0.0
+youtube-transcript-api>=0.6.0
+yt-dlp>=2023.12.30
+pydantic>=2.0.0
+structlog>=23.0.0
+asyncio-mqtt>=0.16.0
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+datasets>=2.14.0
+
+# Video processing
+ffmpeg-python>=0.2.0
+moviepy>=1.0.3
+
+# Utilities
+tqdm>=4.65.0
+click>=8.1.0
+python-dotenv>=1.0.0
+rich>=13.0.0
+
+# Development
+pytest>=7.4.0
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0
