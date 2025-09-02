@@ -49,9 +49,17 @@ async def main():
     print(f"Total QA pairs: {stats['total_qa_pairs']}")
     print(f"Training QA pairs: {stats['training_split']['qa_pairs']}")
     print(f"Validation QA pairs: {stats['validation_split']['qa_pairs']}")
-    print(f"Training filtered out: {stats['training_split']['filtered_out']}")
     print(
-        f"Validation filtered out: {stats['validation_split']['filtered_out']}"
+        f"Training answerable without context: {stats['training_split']['is_answerable_without_context']}"
+    )
+    print(
+        f"Validation answerable without context: {stats['validation_split']['is_answerable_without_context']}"
+    )
+    print(
+        f"Training answerable with context: {stats['training_split']['is_answerable_with_context']}"
+    )
+    print(
+        f"Validation answerable with context: {stats['validation_split']['is_answerable_with_context']}"
     )
 
 

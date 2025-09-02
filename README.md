@@ -244,6 +244,7 @@ The framework generates datasets in multiple formats:
         },
         "confidence_score": 0.85,
         "is_answerable_without_context": false,
+        "is_answerable_with_context": true,
         "llm_s_model": "gpt-4",
         "llm_a_model": "gpt-3.5-turbo"
       }

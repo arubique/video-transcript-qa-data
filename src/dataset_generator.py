@@ -315,7 +315,8 @@ class DatasetGenerator:
                         "video_id": qa_pair.source_document.video_id,
                         "start_time": qa_pair.source_document.start_time,
                         "end_time": qa_pair.source_document.end_time,
-                        "filtered_out": qa_pair.filtered_out,
+                        "is_answerable_without_context": qa_pair.is_answerable_without_context,
+                        "is_answerable_with_context": qa_pair.is_answerable_with_context,
                         "llm_s_model": qa_pair.llm_s_model,
                         "llm_a_model": qa_pair.llm_a_model,
                     }
@@ -334,7 +335,8 @@ class DatasetGenerator:
                         "video_id": qa_pair.source_document.video_id,
                         "start_time": qa_pair.source_document.start_time,
                         "end_time": qa_pair.source_document.end_time,
-                        "filtered_out": qa_pair.filtered_out,
+                        "is_answerable_with_context": qa_pair.is_answerable_with_context,
+                        "is_answerable_without_context": qa_pair.is_answerable_without_context,
                         "llm_s_model": qa_pair.llm_s_model,
                         "llm_a_model": qa_pair.llm_a_model,
                     }
@@ -381,8 +383,20 @@ class DatasetGenerator:
         validation_pairs = dataset.validation_split.qa_pairs
 
         # Calculate filtering statistics
-        training_filtered = sum(1 for p in training_pairs if p.filtered_out)
-        validation_filtered = sum(1 for p in validation_pairs if p.filtered_out)
+        training_filtered = sum(
+            1 for p in training_pairs if p.is_answerable_without_context
+        )
+        validation_filtered = sum(
+            1 for p in validation_pairs if p.is_answerable_without_context
+        )
+
+        # Calculate context answerability statistics
+        training_with_context = sum(
+            1 for p in training_pairs if p.is_answerable_with_context
+        )
+        validation_with_context = sum(
+            1 for p in validation_pairs if p.is_answerable_with_context
+        )
 
         stats = {
             "dataset_name": dataset.name,
@@ -391,8 +405,14 @@ class DatasetGenerator:
             "total_qa_pairs": dataset.total_qa_pairs,
             "training_split": {
                 "qa_pairs": len(training_pairs),
-                "filtered_out": training_filtered,
-                "filtered_ratio": training_filtered / len(training_pairs)
+                "is_answerable_without_context": training_filtered,
+                "is_answerable_without_context_ratio": training_filtered
+                / len(training_pairs)
+                if training_pairs
+                else 0,
+                "answerable_with_context": training_with_context,
+                "answerable_with_context_ratio": training_with_context
+                / len(training_pairs)
                 if training_pairs
                 else 0,
                 "llm_s_model": dataset.training_split.llm_s_model,
@@ -400,8 +420,14 @@ class DatasetGenerator:
             },
             "validation_split": {
                 "qa_pairs": len(validation_pairs),
-                "filtered_out": validation_filtered,
-                "filtered_ratio": validation_filtered / len(validation_pairs)
+                "is_answerable_without_context": validation_filtered,
+                "is_answerable_without_context_ratio": validation_filtered
+                / len(validation_pairs)
+                if validation_pairs
+                else 0,
+                "answerable_with_context": validation_with_context,
+                "answerable_with_context_ratio": validation_with_context
+                / len(validation_pairs)
                 if validation_pairs
                 else 0,
                 "llm_s_model": dataset.validation_split.llm_s_model,

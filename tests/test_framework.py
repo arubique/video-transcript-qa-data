@@ -230,12 +230,14 @@ class TestModels:
             source_document=source_doc,
             llm_s_model="placeholder-llm-s",
             llm_a_model="placeholder-llm-a",
-            filtered_out=False,
+            is_answerable_without_context=False,
+            is_answerable_with_context=True,
         )
 
         assert qa_pair.question == "What is this about?"
         assert qa_pair.answer == "It's about testing."
-        assert not qa_pair.filtered_out
+        assert not qa_pair.is_answerable_without_context
+        assert qa_pair.is_answerable_with_context
 
     def test_llm_config_creation(self):
         """Test LLMConfig model creation."""
