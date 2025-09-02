@@ -117,10 +117,16 @@ async def quick_start_demo():
         )
         print(f"  • Total QA pairs: {stats['total_qa_pairs']}")
         print(
-            f"  • Training filtered out: {stats['training_split']['filtered_out']}"
+            f"  • Training answerable without context: {stats['training_split']['is_answerable_without_context']}"
         )
         print(
-            f"  • Validation filtered out: {stats['validation_split']['filtered_out']}"
+            f"  • Validation answerable without context: {stats['validation_split']['is_answerable_without_context']}"
+        )
+        print(
+            f"  • Training answerable with context: {stats['training_split']['is_answerable_with_context']}"
+        )
+        print(
+            f"  • Validation answerable with context: {stats['validation_split']['is_answerable_with_context']}"
         )
 
         print(f"\n💾 Dataset saved to: {output_dir}")

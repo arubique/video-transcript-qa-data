@@ -382,14 +382,24 @@ def _display_final_statistics(stats: dict):
         str(validation_stats["qa_pairs"]),
     )
     table.add_row(
-        "Filtered Out",
-        str(training_stats["filtered_out"]),
-        str(validation_stats["filtered_out"]),
+        "Answerable without Context",
+        str(training_stats["is_answerable_without_context"]),
+        str(validation_stats["is_answerable_without_context"]),
     )
     table.add_row(
-        "Filtered Ratio",
-        f"{training_stats['filtered_ratio']:.3f}",
-        f"{validation_stats['filtered_ratio']:.3f}",
+        "Answerable without Context Ratio",
+        f"{training_stats['is_answerable_without_context_ratio']:.3f}",
+        f"{validation_stats['is_answerable_without_context_ratio']:.3f}",
+    )
+    table.add_row(
+        "Answerable with Context",
+        str(training_stats["answerable_with_context"]),
+        str(validation_stats["answerable_with_context"]),
+    )
+    table.add_row(
+        "Answerable with Context Ratio",
+        f"{training_stats['answerable_with_context_ratio']:.3f}",
+        f"{validation_stats['answerable_with_context_ratio']:.3f}",
     )
     table.add_row(
         "LLM-S Model",

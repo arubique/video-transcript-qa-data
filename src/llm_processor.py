@@ -126,13 +126,28 @@ class LLMProcessor:
                         )
                     )
 
+                # Test if LLM-A can answer with context
+                if self._is_placeholder_model(self.llm_a_model):
+                    is_answerable_with_context = (
+                        await self._test_placeholder_answer_with_context(
+                            question, answer, source_doc.transcript
+                        )
+                    )
+                else:
+                    is_answerable_with_context = (
+                        await self._test_answer_with_context(
+                            question, answer, source_doc.transcript
+                        )
+                    )
+
                 return QAPair(
                     question=question,
                     answer=answer,
                     source_document=source_doc,
                     llm_s_model=self.llm_s_model,
                     llm_a_model=self.llm_a_model,
-                    filtered_out=is_answerable_without_context,
+                    is_answerable_without_context=is_answerable_without_context,
+                    is_answerable_with_context=is_answerable_with_context,
                 )
 
             except Exception as e:
@@ -360,7 +375,9 @@ class LLMProcessor:
                 )
 
                 # Update the QA pair with validation results
-                qa_pair.filtered_out = no_context_similarity > 0.7
+                qa_pair.is_answerable_without_context = (
+                    no_context_similarity > 0.7
+                )
 
                 return qa_pair
 

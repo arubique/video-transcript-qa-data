@@ -58,9 +58,13 @@ class QAPair(BaseModel):
         ..., description="LLM-S model used to generate this pair"
     )
     llm_a_model: str = Field(..., description="LLM-A model used for validation")
-    filtered_out: bool = Field(
+    is_answerable_without_context: bool = Field(
         False,
-        description="Whether this QA pair was filtered out (answerable without context)",
+        description="Whether this QA pair can be answered without context",
+    )
+    is_answerable_with_context: bool = Field(
+        True,
+        description="Whether LLM-A can answer the question with the provided context",
     )
 
 
