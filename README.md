@@ -6,7 +6,7 @@
 
 > **Transform video content into high-quality question-answer datasets using advanced LLM technology**
 
-A sophisticated framework for automatically generating synthetic question-answer datasets from video content. This tool leverages cutting-edge language models to create contextually relevant QA pairs that are perfect for training and evaluating AI systems.
+A framework for automatically generating synthetic question-answer (QA) datasets from video transcripts. This tool leverages language models to create contextually relevant QA pairs that are perfect for training and evaluating Retrieval Augmented Generation (RAG) systems for video content QA.
 
 ## ✨ Features
 
@@ -25,15 +25,15 @@ The framework follows a modular design with three core components:
 ### 1. Video Processing Pipeline
 - **Video Processor**: Handles video file discovery, metadata extraction, and format standardization
 - **Transcript Extractor**: Segments videos into 30-second chunks and extracts transcript text
-- **Integration with YT-Navigator**: Leverages proven video processing tools from the YT-Navigator project
+- **Integration with YT-Navigator**: Leverages proven video processing tools from the [YT-Navigator](https://github.com/wassim249/YT-Navigator/tree/master) project
 
 ### 2. LLM Processing Engine
 - **LLM-S (Synthesis)**: Generates contextually relevant question-answer pairs from transcript segments
-- **LLM-A (Answer)**: Validates answers and tests context dependency
+- **LLM-A (Answer)**: Validates answers and tests context dependency: tells whether the question can be correctly answered without using the context
 - **Quality Filtering**: Ensures questions require the provided context to answer correctly
 
 ### 3. Dataset Generation System
-- **Training/Validation Splits**: Creates separate datasets with different LLM configurations
+- **Training/Validation Splits**: Creates separate datasets with different LLM configurations: use different LLM-S and LLM-A pairs for training and validation splits to avoid overfitting
 - **Multi-format Export**: Saves datasets in JSON and HuggingFace formats
 - **Comprehensive Metadata**: Includes confidence scores, model information, and timing data
 
@@ -72,8 +72,38 @@ The framework follows a modular design with three core components:
 
 #### Command Line Interface
 
+The framework provides a powerful command-line interface with three main commands that handle the entire dataset generation workflow:
+
+**`create-config-template`** - Generates a configuration file template that you can customize with your specific settings for LLM models, processing parameters, and file paths.
+
+**`generate`** - The main command that processes videos and creates QA datasets. It handles video processing, transcript extraction, LLM-powered QA generation, and exports the final dataset in multiple formats.
+
+**`analyze`** - Allows you to examine existing datasets and view comprehensive statistics including video counts, segment information, QA pair counts, and filtering metrics.
+
+**How to use the config template:**
+
+1. **Generate the template**: Run `create-config-template` to create a JSON configuration file
+2. **Customize settings**: Edit the generated file to set your input/output folders, LLM models, and processing parameters
+3. **Use with generate**: Pass the config file to the `generate` command using `--config-file my_config.json`
+
+This approach is ideal when you want to:
+- Use the same configuration across multiple runs
+- Set different LLM models for training vs validation splits
+- Configure complex processing parameters
+- Share configurations with team members
+
 ```bash
-# Generate a dataset from videos
+# Create a configuration template
+python -m src.cli create-config-template --template-path my_config.json
+
+# Customize the config as you wish
+vim my_config.json
+
+# Generate a dataset from videos using config
+python -m src.cli generate \
+    --config-file my_config.json
+
+# Generate a dataset from videos without using config
 python -m src.cli generate \
     --input-folder ./input_videos \
     --output-folder ./output_dataset \
@@ -82,27 +112,46 @@ python -m src.cli generate \
 
 # Analyze a generated dataset
 python -m src.cli analyze --dataset-path ./output_dataset/educational_videos_qa.json
-
-# Create a configuration template
-python -m src.cli create-config-template --template-path my_config.json
 ```
 
 #### Programmatic Usage
 
+This Python code demonstrates how to use the framework programmatically instead of through the command line. It shows the complete workflow of creating a configuration, initializing the dataset generator, and running the generation process.
+
+**Why asyncio is needed:**
+The framework uses asynchronous programming (`async`/`await`) to handle multiple operations concurrently:
+- **Concurrent video processing** - Multiple videos can be processed simultaneously
+- **Parallel LLM API calls** - Multiple API requests to LLM services can run in parallel
+- **Efficient I/O operations** - File reading/writing and network requests don't block each other
+- **Better performance** - Significantly faster than sequential processing, especially for large video collections
+
+The `asyncio.run(main())` call starts the asynchronous event loop and executes the main function, allowing all the concurrent operations to run efficiently.
+
 ```python
 import asyncio
-from src.models import DatasetConfig
+from src.models import DatasetConfig, LLMConfig
 from src.dataset_generator import DatasetGenerator
 
 async def main():
+    # Create LLM configurations for training and validation splits
+    training_llm_config = LLMConfig(
+        llm_s_model="placeholder-llm-s",
+        llm_a_model="placeholder-llm-a"
+    )
+    validation_llm_config = LLMConfig(
+        llm_s_model="placeholder-llm-s",
+        llm_a_model="placeholder-llm-a"
+    )
+
     # Configure the dataset generation
     config = DatasetConfig(
         input_folder="./input_videos",
         output_folder="./output_dataset",
         segment_duration=30,
-        llm_s_model="gpt-4",
-        llm_a_model="gpt-3.5-turbo",
-        min_qa_confidence=0.7
+        max_concurrent_videos=4,
+        training_split_ratio=0.8,
+        training_llm_config=training_llm_config,
+        validation_llm_config=validation_llm_config
     )
 
     # Create and run the generator
@@ -259,7 +308,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **YT-Navigator**: Leverages video processing tools from the YT-Navigator project
+- **YT-Navigator**: Leverages video processing tools from the [YT-Navigator project](https://github.com/wassim249/YT-Navigator/tree/master)
 - **OpenAI**: Provides the LLM APIs that power the QA generation
 - **HuggingFace**: Dataset format compatibility and ML ecosystem integration
 - **Pydantic**: Type safety and data validation
@@ -277,3 +326,17 @@ If you encounter any issues or have questions:
 **Made with ❤️ for the AI/ML community**
 
 *Transform your video content into powerful training data for the next generation of AI systems.*
+
+## 📚 Citation
+
+If you use this framework in your research or projects, please cite:
+
+```bibtex
+@software{rubinstein2025videotranscriptqa,
+  title={Video Transcript QA Dataset Generation Framework},
+  author={Rubinstein, Alexander},
+  year={2025},
+  url={https://github.com/arubique/video-transcript-qa-data},
+  note={A framework for generating synthetic question-answer datasets from video content using Large Language Models}
+}
+```
