@@ -95,6 +95,10 @@ class DatasetConfig(BaseModel):
     training_split_ratio: float = Field(
         0.8, description="Ratio for training/validation split"
     )
+    transcript_path: Optional[str] = Field(
+        None,
+        description="Path to pre-generated transcript file (JSON format). If provided, transcripts will be loaded from this file instead of being generated.",
+    )
     openai_api_base: Optional[str] = Field(
         None, description="OpenAI API base URL"
     )

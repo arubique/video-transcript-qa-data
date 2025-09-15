@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 import openai
 import structlog
 from openai import AsyncOpenAI
+import os
 
 from .models import QAPair, SourceDocument, TranscriptSegment
 
@@ -36,6 +37,10 @@ class LLMProcessor:
         self.llm_a_model = llm_a_model
         self.max_concurrent = max_concurrent
         self.semaphore = asyncio.Semaphore(max_concurrent)
+
+        if os.path.exists(api_key):
+            with open(api_key, "r") as f:
+                api_key = f.read().strip()
 
         # Initialize OpenAI client (only if not using placeholder models)
         if not self._is_placeholder_model(

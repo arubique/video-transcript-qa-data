@@ -84,27 +84,46 @@ class DatasetGenerator:
             f"[bold blue]🚀 Starting dataset generation: {dataset_name}[/bold blue]"
         )
 
-        # Step 1: Process videos
-        console.print("[bold green]📹 Step 1: Processing videos...[/bold green]")
-        video_metadata_list = await self._process_videos()
+        # Validate that only one of transcript_path or input_folder is provided
+        if self.config.transcript_path and self.config.input_folder:
+            raise ValueError(
+                "Cannot provide both transcript_path and input_folder. "
+                "If transcript_path is provided, transcripts will be loaded from file. "
+                "If input_folder is provided, transcripts will be generated from videos."
+            )
 
-        if not video_metadata_list:
-            raise ValueError("No videos were successfully processed")
+        # Step 1: Load or extract transcripts
+        if self.config.transcript_path:
+            console.print(
+                "[bold green]📝 Step 1: Loading transcripts from file...[/bold green]"
+            )
+            all_transcript_segments = await self._load_transcripts()
+            # For external transcripts, we don't have video metadata, so we'll create a minimal list
+            video_metadata_list = []
+        else:
+            # Step 1: Process videos (only needed when generating transcripts)
+            console.print(
+                "[bold green]📹 Step 1: Processing videos...[/bold green]"
+            )
+            video_metadata_list = await self._process_videos()
 
-        # Step 2: Extract transcripts
-        console.print(
-            "[bold green]📝 Step 2: Extracting transcripts...[/bold green]"
-        )
-        all_transcript_segments = await self._extract_transcripts(
-            video_metadata_list
-        )
+            if not video_metadata_list:
+                raise ValueError("No videos were successfully processed")
+
+            # Step 2: Extract transcripts
+            console.print(
+                "[bold green]📝 Step 2: Extracting transcripts...[/bold green]"
+            )
+            all_transcript_segments = await self._extract_transcripts(
+                video_metadata_list
+            )
 
         if not all_transcript_segments:
-            raise ValueError("No transcript segments were extracted")
+            raise ValueError("No transcript segments were loaded or extracted")
 
-        # Step 3: Generate QA pairs for training split
+        # Step 2: Generate QA pairs for training split
         console.print(
-            "[bold green]🤖 Step 3: Generating QA pairs for training split...[/bold green]"
+            "[bold green]🤖 Step 2: Generating QA pairs for training split...[/bold green]"
         )
         training_qa_pairs = await self._generate_qa_pairs(
             all_transcript_segments,
@@ -112,9 +131,9 @@ class DatasetGenerator:
             self.training_llm_processor,
         )
 
-        # Step 4: Generate QA pairs for validation split
+        # Step 3: Generate QA pairs for validation split
         console.print(
-            "[bold green]🤖 Step 4: Generating QA pairs for validation split...[/bold green]"
+            "[bold green]🤖 Step 3: Generating QA pairs for validation split...[/bold green]"
         )
         validation_qa_pairs = await self._generate_qa_pairs(
             all_transcript_segments,
@@ -122,16 +141,16 @@ class DatasetGenerator:
             self.validation_llm_processor,
         )
 
-        # Step 5: Create dataset splits
+        # Step 4: Create dataset splits
         console.print(
-            "[bold green]📊 Step 5: Creating dataset splits...[/bold green]"
+            "[bold green]📊 Step 4: Creating dataset splits...[/bold green]"
         )
         training_split, validation_split = self._create_dataset_splits(
             training_qa_pairs, validation_qa_pairs
         )
 
-        # Step 6: Save dataset
-        console.print("[bold green]💾 Step 6: Saving dataset...[/bold green]")
+        # Step 5: Save dataset
+        console.print("[bold green]💾 Step 5: Saving dataset...[/bold green]")
         dataset = GeneratedDataset(
             name=dataset_name,
             description=dataset_description,
@@ -213,6 +232,39 @@ class DatasetGenerator:
                     progress.advance(task)
 
         return all_segments
+
+    async def _load_transcripts(self) -> List:
+        """Load transcripts from external file."""
+        import json
+        from pathlib import Path
+
+        transcript_path = Path(self.config.transcript_path)
+        if not transcript_path.exists():
+            raise ValueError(f"Transcript file not found: {transcript_path}")
+
+        try:
+            with open(transcript_path, "r", encoding="utf-8") as f:
+                transcript_data = json.load(f)
+
+            # Convert the loaded data back to TranscriptSegment objects
+            from .models import TranscriptSegment
+
+            segments = []
+
+            for segment_data in transcript_data:
+                segment = TranscriptSegment(**segment_data)
+                segments.append(segment)
+
+            logger.info(
+                f"Loaded {len(segments)} transcript segments from {transcript_path}"
+            )
+            return segments
+
+        except Exception as e:
+            logger.error(
+                f"Failed to load transcripts from {transcript_path}: {e}"
+            )
+            raise ValueError(f"Failed to load transcripts: {e}")
 
     async def _generate_qa_pairs(
         self,

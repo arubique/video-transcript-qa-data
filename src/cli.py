@@ -91,6 +91,11 @@ def cli():
     "--openai-api-key", envvar="OPENAI_API_KEY", help="OpenAI API key"
 )
 @click.option(
+    "--transcript-path",
+    "-t",
+    help="Path to pre-generated transcript file (JSON format). If provided, transcripts will be loaded from this file instead of being generated.",
+)
+@click.option(
     "--config-file", "-c", help="Path to configuration file (JSON format)"
 )
 def generate(
@@ -107,6 +112,7 @@ def generate(
     validation_llm_a_model: str,
     openai_api_base: Optional[str],
     openai_api_key: Optional[str],
+    transcript_path: Optional[str],
     config_file: Optional[str],
 ):
     """Generate a synthetic QA dataset from videos."""
@@ -130,6 +136,7 @@ def generate(
             segment_duration=segment_duration,
             max_concurrent_videos=max_concurrent_videos,
             training_split_ratio=training_split_ratio,
+            transcript_path=transcript_path,
             openai_api_base=openai_api_base,
             openai_api_key=openai_api_key,
             training_llm_config=training_llm_config,
@@ -144,6 +151,53 @@ def generate(
 
     # Run the dataset generation
     asyncio.run(_run_generation(config, dataset_name, dataset_description))
+
+
+@cli.command()
+@click.option(
+    "--input-folder", "-i", required=True, help="Folder containing input videos"
+)
+@click.option(
+    "--output-file",
+    "-o",
+    required=True,
+    help="Path to save the generated transcript file (JSON format)",
+)
+@click.option(
+    "--segment-duration",
+    default=30,
+    help="Duration of transcript segments in seconds",
+)
+@click.option(
+    "--max-concurrent-videos",
+    default=4,
+    help="Maximum number of videos to process concurrently",
+)
+def extract_transcripts(
+    input_folder: str,
+    output_file: str,
+    segment_duration: int,
+    max_concurrent_videos: int,
+):
+    """Extract transcripts from videos and save to a JSON file."""
+
+    # Validate input folder
+    if not os.path.exists(input_folder):
+        console.print(
+            f"[bold red]Error: Input folder does not exist: {input_folder}[/bold red]"
+        )
+        return
+
+    # Create output directory if it doesn't exist
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Run transcript extraction
+    asyncio.run(
+        _run_transcript_extraction(
+            input_folder, output_file, segment_duration, max_concurrent_videos
+        )
+    )
 
 
 @cli.command()
@@ -196,6 +250,7 @@ def create_config_template(template_path: str):
         segment_duration=30,
         max_concurrent_videos=4,
         training_split_ratio=0.8,
+        transcript_path=None,
         openai_api_base="https://api.openai.com/v1",
         openai_api_key="your-api-key-here",
         training_llm_config=training_llm_config,
@@ -227,8 +282,22 @@ def _load_config_from_file(config_file: str) -> DatasetConfig:
 
 def _validate_config(config: DatasetConfig):
     """Validate the configuration."""
-    # Check if input folder exists
-    if not os.path.exists(config.input_folder):
+    # Validate that only one of transcript_path or input_folder is provided
+    if config.transcript_path and config.input_folder:
+        raise click.ClickException(
+            "Cannot provide both transcript_path and input_folder. "
+            "If transcript_path is provided, transcripts will be loaded from file. "
+            "If input_folder is provided, transcripts will be generated from videos."
+        )
+
+    # Check if transcript file exists (if provided)
+    if config.transcript_path and not os.path.exists(config.transcript_path):
+        raise click.ClickException(
+            f"Transcript file does not exist: {config.transcript_path}"
+        )
+
+    # Check if input folder exists (if provided)
+    if config.input_folder and not os.path.exists(config.input_folder):
         raise click.ClickException(
             f"Input folder does not exist: {config.input_folder}"
         )
@@ -267,10 +336,18 @@ def _display_config(config: DatasetConfig):
     table.add_column("Setting", style="cyan")
     table.add_column("Value", style="green")
 
-    table.add_row("Input Folder", config.input_folder)
+    if config.transcript_path:
+        table.add_row("Mode", "External Transcripts")
+        table.add_row("Transcript Path", config.transcript_path)
+    else:
+        table.add_row("Mode", "Generate Transcripts")
+        table.add_row("Input Folder", config.input_folder)
+        table.add_row("Segment Duration", f"{config.segment_duration} seconds")
+        table.add_row(
+            "Max Concurrent Videos", str(config.max_concurrent_videos)
+        )
+
     table.add_row("Output Folder", config.output_folder)
-    table.add_row("Segment Duration", f"{config.segment_duration} seconds")
-    table.add_row("Max Concurrent Videos", str(config.max_concurrent_videos))
     table.add_row("Training Split Ratio", f"{config.training_split_ratio:.2f}")
 
     # Training LLM config
@@ -313,6 +390,83 @@ async def _run_generation(
 
     except Exception as e:
         console.print(f"[bold red]❌ Dataset generation failed: {e}[/bold red]")
+        raise click.ClickException(str(e))
+
+
+async def _run_transcript_extraction(
+    input_folder: str,
+    output_file: str,
+    segment_duration: int,
+    max_concurrent_videos: int,
+):
+    """Run the transcript extraction process."""
+    try:
+        from .video_processor import VideoProcessor, TranscriptExtractor
+
+        console.print(
+            f"[bold blue]🚀 Starting transcript extraction...[/bold blue]"
+        )
+
+        # Initialize video processor and transcript extractor
+        video_processor = VideoProcessor(
+            output_dir=f"{Path(output_file).parent}/videos",
+            max_concurrent=max_concurrent_videos,
+        )
+        transcript_extractor = TranscriptExtractor(
+            segment_duration=segment_duration
+        )
+
+        # Process videos
+        console.print("[bold green]📹 Processing videos...[/bold green]")
+        video_metadata_list = await video_processor.process_video_folder(
+            input_folder
+        )
+
+        if not video_metadata_list:
+            raise ValueError("No videos were successfully processed")
+
+        # Extract transcripts
+        console.print("[bold green]📝 Extracting transcripts...[/bold green]")
+        all_transcript_segments = []
+
+        for video_metadata in video_metadata_list:
+            try:
+                segments = transcript_extractor.extract_transcripts(
+                    video_metadata
+                )
+                all_transcript_segments.extend(segments)
+            except Exception as e:
+                logger.error(
+                    f"Failed to extract transcripts from {video_metadata.video_id}: {e}"
+                )
+
+        if not all_transcript_segments:
+            raise ValueError("No transcript segments were extracted")
+
+        # Save transcripts to file
+        console.print(
+            f"[bold green]💾 Saving transcripts to {output_file}...[/bold green]"
+        )
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(
+                [segment.model_dump() for segment in all_transcript_segments],
+                f,
+                indent=2,
+                default=str,
+            )
+
+        console.print(
+            f"[bold green]✅ Transcript extraction completed successfully![/bold green]"
+        )
+        console.print(f"[bold]📊 Extraction Statistics:[/bold]")
+        console.print(f"  • Total videos: {len(video_metadata_list)}")
+        console.print(f"  • Total segments: {len(all_transcript_segments)}")
+        console.print(f"  • Output file: {output_file}")
+
+    except Exception as e:
+        console.print(
+            f"[bold red]❌ Transcript extraction failed: {e}[/bold red]"
+        )
         raise click.ClickException(str(e))
 
 
