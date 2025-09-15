@@ -1,0 +1,124 @@
+{
+    "videos": [
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec01_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "01 - Lec 1 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec02_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "02 - Lec 2 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec03_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "03 - Lec 3 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec04_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "04 - Lec 4 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec05_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "05 - Lec 5 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec06_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "06 - Lec 6 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec07_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "07 - Lec 7 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec08_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "08 - Lec 8 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec09_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "09 - Lec 9 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec10_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "10 - Lec 10 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec11_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "11 - Lec 11 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec12_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "12 - Lec 12 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec13_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "13 - Lec 13 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec14_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "14 - Lec 14 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec15_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "15 - Lec 15 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec16_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "16 - Lec 16 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec17_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "17 - Lec 17 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec18_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "18 - Lec 18 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec19_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "19 - Lec 19 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec20_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "20 - Lec 20 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec21_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "21 - Lec 21 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec22_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "22 - Lec 22 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec23_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "23 - Lec 23 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        },
+        {
+            "url": "http://www.archive.org/download/MIT9.00SCF11/MIT9_00SCF11_lec24_300k.mp4",
+            "directory": "MIT9.00SCF11",
+            "filename": "24 - Lec 24 _ MIT 9.00SC Introduction to Psychology, Spring 2011.mp4"
+        }
+    ]
+}

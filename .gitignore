@@ -4,6 +4,10 @@ envs/
 .venv
 venv/
 ENV/
+configs
+experiments
+experiment_configs
+inputs
 
 # Python
 __pycache__/
