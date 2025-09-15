@@ -5,6 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Extract Transcripts",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "src.cli",
+            "console": "integratedTerminal",
+            "args": [
+                "extract-transcripts",
+                "--input-folder", "./input_videos",
+                "--output-file", "./transcripts.json",
+                "--segment-duration", "30"
+            ]
+        },
+        {
             "name": "Download Input Videos",
             "type": "debugpy",
             "request": "launch",

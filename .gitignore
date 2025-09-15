@@ -8,6 +8,7 @@ configs
 experiments
 experiment_configs
 inputs
+yt-navigator/build
 
 # Python
 __pycache__/

@@ -50,7 +50,7 @@ The framework follows a modular design with three core components:
 2. **Set up the environment**
    ```bash
    # Create conda environment
-   conda create --prefix ./envs/trqa python=3.10.0 --no-deps --channel conda-forge --channel defaults --override-channels
+   conda create --prefix ./envs/trqa python=3.13.2 --channel conda-forge --channel defaults --override-channels
 
    # Activate environment
    conda activate ./envs/trqa
