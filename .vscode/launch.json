@@ -12,8 +12,8 @@
             "console": "integratedTerminal",
             "args": [
                 "extract-transcripts",
-                "--input-folder", "./input_videos",
-                "--output-file", "./transcripts.json",
+                "--input-folder", "./data/input_videos/opencourseware",
+                "--output-file", "./data/transcripts/opencourseware_debug.json",
                 "--segment-duration", "30"
             ]
         },

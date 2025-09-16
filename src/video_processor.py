@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import structlog
-import yt_dlp
+
+# import yt_dlp
 from youtube_transcript_api import (
     NoTranscriptFound,
     TranscriptsDisabled,
@@ -18,15 +19,26 @@ from youtube_transcript_api import (
 # Import functions from YT-Navigator
 import sys
 
-sys.path.append("./yt-navigator")
+sys.path.insert(0, "./yt-navigator")
+
+# Configure Django settings before importing any Django models
+import os
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "yt_navigator.settings")
+
+import django
+
+django.setup()
+
 try:
-    from yt_navigator.app.services.scraping.transcript import (
+    # Import directly from the module to avoid the problematic __init__.py
+    from app.services.scraping.transcript import (
         TranscriptScraper as YTTranscriptScraper,
     )
-    from yt_navigator.app.services.scraping.video import (
+    from app.services.scraping.video import (
         VideoScraper as YTVideoScraper,
     )
-    from yt_navigator.app.helpers import (
+    from app.helpers import (
         convert_seconds_to_timestamp as yt_convert_timestamp,
     )
 
@@ -34,6 +46,7 @@ try:
 except ImportError:
     YT_NAVIGATOR_AVAILABLE = False
     print("Warning: YT-Navigator not available, using fallback implementations")
+sys.path.pop(0)
 
 from .models import TranscriptSegment, VideoMetadata
 
